@@ -1,12 +1,12 @@
-import React from "react";
-import styled from "react-emotion";
-import colors from "../../design/colors";
+import React from 'react';
+import styled from 'react-emotion';
+import colors from '../../design/colors';
 
-const Header = styled.h1`
+export const HeaderBar = styled.h1`
   margin: 0;
   padding: 20px;
   width: 100vw;
-  background: linear-gradient(45deg, #7f9a99, #1a67f3);
+  background: linear-gradient(45deg, ${colors.blue}, ${colors.subtleBlue});
   color: ${colors.white};
   box-sizing: border-box;
   font-weight: 100;
@@ -15,18 +15,21 @@ const Header = styled.h1`
   align-items: center;
 `;
 
-const Button = styled.div`
+export const HeaderButton = styled.div`
   cursor: pointer;
-  color: ${props => (props.disabled ? colors.grey : "inherit")};
-  pointer-events: ${props => (props.disabled ? "none" : "")};
+  color: ${props => (props.disabled ? colors.grey : 'inherit')};
+  pointer-events: ${props => (props.disabled ? 'none' : '')};
 `;
 
 export default ({ date, onPrevious, onNext, hasNext }) => (
-  <Header>
-    <Button onClick={onPrevious}>&lt;</Button>
+  <HeaderBar>
+    <HeaderButton onClick={onPrevious}>&lt;</HeaderButton>
     <div>{date}</div>
-    <Button disabled={hasNext === false} onClick={hasNext ? onNext : null}>
+    <HeaderButton
+      disabled={hasNext === false}
+      onClick={hasNext ? onNext : null}
+    >
       &gt;
-    </Button>
-  </Header>
+    </HeaderButton>
+  </HeaderBar>
 );

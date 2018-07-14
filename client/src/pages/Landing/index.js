@@ -3,6 +3,7 @@ import { css } from 'react-emotion';
 import colors from '../../design/colors';
 import { authenticate, isAuthenticated } from '../../util/api';
 import Button from '../../components/Button';
+import CoolContent from '../../components/CoolContent';
 
 const auth = isAuthenticated();
 
@@ -23,16 +24,7 @@ export default class Landing extends React.PureComponent {
     const shouldShowLogin = step === Landing.STEPS.LOGIN;
 
     return (
-      <div
-        className={css`
-          color: ${colors.white};
-          width: 100vw;
-          height: 100vh;
-          padding: 10vh 10vw;
-          box-sizing: border-box;
-          background: linear-gradient(45deg, #7f9a99, #1a67f3);
-        `}
-      >
+      <CoolContent>
         <h1
           className={css`
             color: ${colors.white};
@@ -84,7 +76,7 @@ export default class Landing extends React.PureComponent {
             <Button>Login</Button>
           </form>
         )}
-      </div>
+      </CoolContent>
     );
   }
 }

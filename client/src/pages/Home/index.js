@@ -11,7 +11,12 @@ import {
   getActivityCalorieByDate,
   getTotalCalorieByDate,
 } from '../../api/fitness';
-import Loader from '../../components/Loader';
+import { LoadingView } from '../../components/Loader';
+import {
+  getFoodCalorieByDate,
+  getTotalFoodCalorieByDate,
+} from '../../api/swiggy';
+import Button from '../../components/Button';
 
 const now = Date.now();
 const nowDate = new Date(now);
@@ -21,11 +26,6 @@ export default class Home extends React.PureComponent {
     customerId: null,
     date: today,
     loading: true,
-    consumed: parseInt(Math.random() * 1000 + 1000),
-    food: [
-      { time: Date.now() - HOUR * 5, title: 'Veg Biryani', calories: 530 },
-      { time: Date.now() - HOUR * 12, title: 'Rajma Chawal', calories: 343 },
-    ],
   };
 
   render() {
@@ -57,9 +57,9 @@ export default class Home extends React.PureComponent {
           onPrevious={this.handlePreviousDate}
           onNext={this.handleNextDate}
         />
-        <Content>
+        <Content key={loading}>
           {loading ? (
-            <Loader />
+            LoadingView
           ) : (
             <React.Fragment>
               <Calorie burnt={burnt} consumed={consumed} />
@@ -104,6 +104,8 @@ export default class Home extends React.PureComponent {
                   </React.Fragment>
                 )}
               </Tabs>
+
+              <Button onClick={this.props.onSummary}>View Summary</Button>
             </React.Fragment>
           )}
         </Content>
@@ -140,13 +142,16 @@ export default class Home extends React.PureComponent {
 
   fetchData = async () => {
     const { date } = this.state;
-    const [activities, burnt] = await Promise.all([
+    const [activities, burnt, consumed, food] = await Promise.all([
       getActivityCalorieByDate(date),
       getTotalCalorieByDate(date),
+      getTotalFoodCalorieByDate(date),
+      getFoodCalorieByDate(date),
     ]);
 
     activities.sort((a, b) => b.calories - a.calories);
+    food.sort((a, b) => b.calories - a.calories);
 
-    this.setState({ loading: false, burnt, activities });
+    this.setState({ loading: false, burnt, consumed, activities, food });
   };
 }

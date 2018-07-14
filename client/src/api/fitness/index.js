@@ -45,7 +45,7 @@ export const getActivityCalorieByDate = date =>
     return data.bucket.map(({ activity, dataset }) => ({
       title: ACTIVITIES[Number(activity)] || 'Unknown Activity',
       time: getActivityStartTime(dataset),
-      calories: aggregateDataset(dataset),
+      calories: -aggregateDataset(dataset),
     }));
   });
 
