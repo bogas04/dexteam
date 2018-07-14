@@ -13,4 +13,13 @@ exports.fetchTheseItems = function(itemIdArray, baap,  done) {
         baap["from_items"] = rows;
         done(rows, baap);
     });
+};
+
+var calorieItemsMap = {};
+function createCaloriesItemsMap() {
+
 }
+
+createCaloriesItemsMap(function (d) {
+    console.log(d + "items added in map.");
+})

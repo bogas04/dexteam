@@ -3,10 +3,19 @@ var itemsObj = require('../models/items')
 var Insights = require('../utils/insights_util')
 
 const FETCH_ALL = "SELECT * from users";
+const FETCH_SINGLE = "SELECT * from users where id='$customer_id'";
 const FETCH_ORDERS_OF_DAY = "SELECT * from order_data where customer_id='$customer_id' and delivered_time>= 'yyyymmdd 00:00:00' and delivered_time<= 'yyyymmdd 23:59:59'";
 const FETCH_ALL_FOR_USER = "SELECT * from order_data where customer_id='$customer_id'";
+const FETCH_CALORIES_HISTORY_FOR_USER = "select * from customers_calorie_history where customer_id='$customer_id'";
+const FETCH_CALORIES_HISTORY_FOR_USER_BY_DATE = "select * from customers_calorie_history where customer_id='$customer_id' and date='yyyymmdd'";
 
-exports.fetchAll = function(done) {
+//UPDATE Customers
+//SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+//WHERE CustomerID = 1;
+
+const PUT_MEAL_DATA_IN_CALORIE_HISTORY_WHEN_PRESENT = "update customers_calorie_history SET calories_intake=$cal_in, metadata='$json_blob' where customer_id='$customer_id' and date='yyyymmdd'";
+const PUT_MEAL_DATA_IN_CALORIE_HISTORY_WHEN_ABSENT = "insert into customers_calorie_history values('$customer_id', '$cal_in', 'yyyymmdd', 0, '', '$json_blob')";
+exports.fetchAllUsers = function(done) {
     db.get().query(FETCH_ALL, function (err, rows) {
         if(err) {
             return done(err);
@@ -14,6 +23,23 @@ exports.fetchAll = function(done) {
         done(rows);
     });
 };
+
+exports.fetchSingleUserInfo = function(customerId, done) {
+    sql_query = FETCH_SINGLE.replace('$customer_id', customerId)
+    db.get().query(sql_query, function (err, rows) {
+        if(err) {
+            return done(err);
+        }
+        if (rows.length > 0) {
+            done(rows[0]);
+        }
+        else {
+            done(rows);
+        }
+
+    });
+};
+
 
 exports.fetchOrderOfDay = function(customerId, dayStr, done) {
     sql_query = FETCH_ORDERS_OF_DAY.replace('$customer_id', customerId).replace(/yyyymmdd/g, dayStr);
@@ -88,6 +114,72 @@ exports.userSummary = function (customerId, done) {
         done(insights);
     });
 
+};
+
+
+exports.userCaloriesInOut = function(customerId, done) {
+    sql_query = FETCH_CALORIES_HISTORY_FOR_USER.replace('$customer_id', customerId);
+    db.get().query(sql_query, function (err, rows) {
+        if(err) {
+            return done(err);
+        }
+        done(rows);
+    });
+};
+
+exports.userCaloriesInOutByDate = function(customerId, dayStr, done) {
+   sql_query = FETCH_CALORIES_HISTORY_FOR_USER_BY_DATE.replace('$customer_id', customerId).replace(/yyyymmdd/g, dayStr);
+   db.get().query(sql_query, function (err, rows) {
+       if(err) {
+           return done(err);
+       }
+       sumObj = {
+           "customer_id": customerId,
+           "calories_intake": 0,
+           "date": dayStr,
+           "calories_out": 0
+       }
+       rows.forEach(function (history) {
+            sumObj.calories_intake += history.calories_intake;
+            sumObj.calories_out += history.calories_out;
+       });
+       done(sumObj);
+   });
+};
+
+exports.addThisMealToDate = function(customerId, dayStr, requestBody , done) {
+console.log(customerId, dayStr, requestBody);
+   var actualMetadataObject = requestBody.metadata;
+   var calIn = actualMetadataObject[0].calories;
+   var jsonBlobAsString = JSON.stringify(actualMetadataObject);
+   sql_query = FETCH_CALORIES_HISTORY_FOR_USER_BY_DATE.replace('$customer_id', customerId).replace(/yyyymmdd/g, dayStr);
+   db.get().query(sql_query, function (err, rows) {
+       if(err) {
+           return done(err);
+       }
+       if(rows.length) {    //entry present
+            var existingValue = rows[0];
+            var existingCalIntake = existingValue['calories_intake'];
+            var newCalIntake = existingCalIntake + calIn;
+
+            var existingJsonBlob = existingValue['metadata'];
+            var existingJsonBlobParsed = JSON.parse(existingJsonBlob);
+            existingJsonBlobParsed.push(actualMetadataObject[0]);
+            var stringifiedNewMeta = JSON.stringify(existingJsonBlobParsed);
+            //"insert into customers_calorie_history values('$customer_id', '$cal_in', 'yyyymmdd', 0, '', '$json_blob')";
+            absent_query = PUT_MEAL_DATA_IN_CALORIE_HISTORY_WHEN_PRESENT.replace('$customer_id', customerId).replace('$cal_in', calIn).replace(/yyyymmdd/g, dayStr).replace('$json_blob', stringifiedNewMeta);
+           db.get().query(absent_query, function (err, rows2) {
+                done(rows2);
+           });
+       }
+       else {   //row absent
+            //"insert into customers_calorie_history values('$customer_id', '$cal_in', 'yyyymmdd', 0, '', '$json_blob')";
+            absent_query = PUT_MEAL_DATA_IN_CALORIE_HISTORY_WHEN_ABSENT.replace('$customer_id', customerId).replace('$cal_in', calIn).replace(/yyyymmdd/g, dayStr).replace('$json_blob', jsonBlobAsString);
+            db.get().query(absent_query, function (err, rows2) {
+                done(rows2);
+            });
+       }
+   });
 };
 
 
