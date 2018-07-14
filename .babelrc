@@ -6,5 +6,6 @@
     "development": {
       "plugins": [["emotion", { "sourceMap": true, "autoLabel": true }]]
     }
-  }
+  },
+  "plugins": ["transform-class-properties"]
 }
