@@ -1,10 +1,10 @@
-import React from "react";
-import Card from "../Card";
-import Donut from "react-svg-donut-chart";
-import styled, { css } from "react-emotion";
-import colors from "../../design/colors";
+import React from 'react';
+import Card from '../Card';
+import Donut from 'react-svg-donut-chart';
+import styled, { css } from 'react-emotion';
+import colors from '../../design/colors';
 
-export default ({ burnt, consumed, percentChange }) => (
+export default ({ burnt, consumed }) => (
   <Card>
     <Donut
       data={[
@@ -26,7 +26,7 @@ export default ({ burnt, consumed, percentChange }) => (
     >
       Total Calorie Consumed: {consumed}
     </h3>
-    <p>
+    {/*<p>
       You consumed{" "}
       <strong
         className={css`
@@ -36,6 +36,6 @@ export default ({ burnt, consumed, percentChange }) => (
         {percentChange > 0 ? `+${percentChange}` : percentChange}%
       </strong>{" "}
       calories today from your average.
-    </p>
+    </p>*/}
   </Card>
 );
