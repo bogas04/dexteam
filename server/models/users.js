@@ -1,5 +1,6 @@
 var db = require('../db')
 var itemsObj = require('../models/items')
+var Insights = require('../utils/insights_util')
 
 const FETCH_ALL = "SELECT * from users";
 const FETCH_ORDERS_OF_DAY = "SELECT * from order_data where customer_id='$customer_id' and delivered_time>= 'yyyymmdd 00:00:00' and delivered_time<= 'yyyymmdd 23:59:59'";
@@ -53,11 +54,38 @@ exports.userSummary = function (customerId, done) {
         if(err) {
             return done(err);
         }
-        insights = {
-            "total_order": rows.length,
+        var totalRows = rows.length;
+        var restaurantsOrderCountMap = {};
+        var itemOrderCountMap = {};
+        var totalMoneySpent = 0;
+        for(var i=0; i<totalRows; i++) {
+            iterRow = rows[i];
+            restId = iterRow["restaurant_id"];
+            if( restId in restaurantsOrderCountMap) {
+             restaurantsOrderCountMap[restId] = restaurantsOrderCountMap[restId] + 1;
+            }
+            else {
+                restaurantsOrderCountMap[restId] =  1;
+            }
+            orderItems = JSON.parse(iterRow["items"]);
+            orderItems.forEach(function(itemInOrder) {
+                if( itemInOrder in itemOrderCountMap) {
+                     itemOrderCountMap[itemInOrder] = itemOrderCountMap[itemInOrder] + 1;
+                }
+                else {
+                    itemOrderCountMap[itemInOrder] =  1;
+                }
+            });
+            totalMoneySpent += parseFloat(iterRow["gmv_total"]);
+        }
+        var insights = {
+            "total_order": totalRows,
+            "top_5_restaurants": Insights.getTopFiveRestaurants(restaurantsOrderCountMap),
+            "top_5_items": Insights.getTopFiveItems(itemOrderCountMap),
+            "total_money_spent": totalMoneySpent,
+            "average_gmv": (totalMoneySpent/totalRows)
         };
-        // for(int i=0)
-        done(rows);
+        done(insights);
     });
 
 };
