@@ -24,7 +24,6 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "http-errors": "~1.6.2",
-    "jade": "~1.11.0",
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
     "node-aho-corasick": "0.0.2",
@@ -32,6 +31,7 @@
     "react-svg-donut-chart": "^1.0.0"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-plugin-emotion": "^9.2.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
@@ -51,6 +51,7 @@
   },
   "homepage": "https://github.com/bogas04/dexteam#readme",
   "prettier": {
-    "trailingComma": "es5"
+    "trailingComma": "es5",
+    "singleQuote": true
   }
 }

@@ -1,17 +1,16 @@
 const express = require("express");
-const api = require("./api");
+const userAPI = require("./api/users");
 
 const app = express();
 const PORT = process.env.PORT || 1337;
-var db = require('./db')
-var usersRouter = require('./routes/users');
+var db = require("./db");
 
-db.connect(db.MODE_PRODUCTION, function () {
-    console.log("app.js: DB connected")
-});
+db.connect(
+  db.MODE_PRODUCTION,
+  () => console.log("index.js: DB connected")
+);
 
 app
   .use(express.static(`${__dirname}/../public`))
-  .use("/api", api)
-  .use('/users', usersRouter)
-  .listen(PORT, () => console.log(`Server listening on ${PORT}`));
+  .use("/api/users", userAPI)
+  .listen(PORT, () => console.log(`index.js Server listening on ${PORT}`));

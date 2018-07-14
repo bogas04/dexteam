@@ -1,16 +1,16 @@
 import React from "react";
-import styled, { css } from "../../../../node_modules/react-emotion";
+import styled, { css } from "react-emotion";
 import colors from "../../design/colors";
 
 export default class Tabs extends React.PureComponent {
   state = {
-    currentTabIndex: 0
+    currentTabIndex: 0,
   };
 
   render() {
     return this.props.children({
       currentTabIndex: this.state.currentTabIndex,
-      setTabIndex: this.setTabIndex
+      setTabIndex: this.setTabIndex,
     });
   }
 
