@@ -1,3 +1,7 @@
+# Parcel
+.cache
+public
+
 # Logs
 logs
 *.log
