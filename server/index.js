@@ -12,6 +12,8 @@ db.connect(db.MODE_PRODUCTION, function () {
 
 app
   .use(express.static(`${__dirname}/../public`))
+  .use(express.json())
+  .use(express.urlencoded({ extended: false }))
   .use("/api", api)
   .use('/users', usersRouter)
   .listen(PORT, () => console.log(`Server listening on ${PORT}`));

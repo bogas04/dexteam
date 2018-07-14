@@ -42,8 +42,6 @@ router.get('/:customer_id/calories_history/:date_string', function(req, res, nex
 });
 
 router.post('/:customer_id/calories_history/:date_string', function(req, res, next) {      //put a new meal calorie detail
-    debugger;
-    console.log('body='+JSON.stringify(req));
     Users.addThisMealToDate(req.params.customer_id,req.params.date_string,req.body, function(data) {
         return res.status(200).json(data);
     });
