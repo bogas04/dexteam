@@ -8,7 +8,7 @@ const scope = [
   'https://www.googleapis.com/auth/fitness.nutrition.read',
 ].join(' ');
 
-const redirect_uri = `http://localhost:1337`;
+const redirect_uri = window.location.href.replace(/\/$/, '');
 
 const params = {
   client_id,
