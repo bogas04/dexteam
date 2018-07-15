@@ -142,11 +142,13 @@ export default class Home extends React.PureComponent {
 
   fetchData = async () => {
     const { date } = this.state;
+    const { customerId } = this.props;
+
     const [activities, burnt, consumed, food] = await Promise.all([
       getActivityCalorieByDate(date),
       getTotalCalorieByDate(date),
-      getTotalFoodCalorieByDate(date),
-      getFoodCalorieByDate(date),
+      getTotalFoodCalorieByDate({ customerId, date }),
+      getFoodCalorieByDate({ customerId, date }),
     ]);
 
     activities.sort((a, b) => b.calories - a.calories);

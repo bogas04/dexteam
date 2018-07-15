@@ -15,6 +15,7 @@ export default class Landing extends React.PureComponent {
 
   state = {
     step: auth !== undefined ? Landing.STEPS.LOGIN : Landing.STEPS.CONNECT,
+    customers: [],
   };
 
   render() {
@@ -56,6 +57,7 @@ export default class Landing extends React.PureComponent {
           >
             <input
               name="customerId"
+              list="browsers"
               className={css`
                 color: ${colors.white};
                 outline: none;
@@ -70,13 +72,21 @@ export default class Landing extends React.PureComponent {
                   color: white;
                 }
               `}
-              type="text"
               placeholder="Customer ID"
             />
+            <datalist id="browsers">
+              {this.state.customers.map(id => <option value={id}>{id}</option>)}
+            </datalist>
             <Button>Login</Button>
           </form>
         )}
       </CoolContent>
     );
+  }
+
+  componentDidMount() {
+    fetch(`/api/users/`)
+      .then(r => r.json())
+      .then(customers => this.setState({ customers }));
   }
 }

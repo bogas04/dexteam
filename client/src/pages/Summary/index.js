@@ -1,9 +1,9 @@
 import React from 'react';
-import Content from '../../components/CoolContent';
-import { HeaderButton as Button } from '../../components/Header';
 import styled, { css } from 'react-emotion';
 import { LoadingView } from '../../components/Loader';
 import { getUserSummary } from '../../api/swiggy';
+import Content from '../../components/Content';
+import { HeaderButton as CoolButton } from '../../components/Header';
 
 const CoolContent = styled(Content)`
   font-weight: 100;
@@ -22,9 +22,11 @@ const CoolContent = styled(Content)`
   }
 `;
 
+/*
 const CoolButton = styled(Button)`
   font-size: 2em;
 `;
+*/
 
 export default class Summary extends React.PureComponent {
   state = {

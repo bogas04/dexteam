@@ -2,7 +2,7 @@ const express = require('express');
 
 const app = express();
 const PORT = process.env.PORT || 1337;
-var db = require('./db');
+const db = require('./db');
 const usersRouter = require('./routes/users');
 const itemsRouter = require('./routes/items');
 
