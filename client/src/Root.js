@@ -1,11 +1,8 @@
-import React from "react";
-import styled, { injectGlobal, css } from "react-emotion";
-import Header from "./components/Header";
-import Tabs, { TabPills } from "./components/Tabs";
-import Calorie from "./components/Calorie";
-import Content from "./components/Content";
-import Card from "./components/Card";
-import colors from "./design/colors";
+import React from 'react';
+import { injectGlobal } from 'react-emotion';
+import Landing from './pages/Landing';
+import Home from './pages/Home';
+import Summary from './pages/Summary';
 
 injectGlobal`
   body {
@@ -15,119 +12,47 @@ injectGlobal`
   }
 `;
 
-const SECOND = 1000;
-const MINUTE = SECOND * 60;
-const HOUR = MINUTE * 60;
-const DAY = HOUR * 24;
-
 export default class Root extends React.PureComponent {
+  static PAGES = {
+    LANDING: 0,
+    HOME: 1,
+    SUMMARY: 2,
+  };
   state = {
-    date: Date.now(),
-    burnt: parseInt(Math.random() * 1000 + 1000),
-    consumed: parseInt(Math.random() * 1000 + 1000),
-    percentChange: parseInt(Math.random() * 100),
-    activities: [
-      { time: Date.now() - HOUR * 2, title: "🚶‍️ Walking", calories: -123 },
-      { time: Date.now() - HOUR * 3, title: "🏃‍ Running", calories: -253 },
-      { time: Date.now() - HOUR * 1, title: "🚴‍️ Cycling", calories: -83 },
-    ],
-    food: [
-      { time: Date.now() - HOUR * 5, title: "Veg Biryani", calories: 530 },
-      { time: Date.now() - HOUR * 12, title: "Rajma Chawal", calories: 343 },
-    ],
+    customerId: null,
+    page: Root.PAGES.LANDING,
   };
+
   render() {
-    const {
-      activities,
-      food,
-      burnt,
-      consumed,
-      percentChange,
-      date,
-    } = this.state;
+    const { PAGES } = Root;
+    const { page, customerId } = this.state;
 
-    const timeline = [
-      {
-        title: "💪 Workout",
-        items: activities,
-      },
-      {
-        title: "🌯 Diet",
-        items: food,
-      },
-    ];
-
-    return (
-      <React.Fragment>
-        <Header
-          date={new Date(date).toDateString()}
-          hasNext={this.hasNextDate(date)}
-          onPrevious={this.handlePreviousDate}
-          onNext={this.handleNextDate}
-        />
-        <Content>
-          <Calorie
-            burnt={burnt}
-            consumed={consumed}
-            percentChange={percentChange}
+    switch (page) {
+      case PAGES.LANDING:
+        return (
+          <Landing
+            onLogin={({ customerId }) =>
+              this.setState({ customerId, page: PAGES.HOME })
+            }
           />
-          <Tabs>
-            {({ currentTabIndex, setTabIndex }) => (
-              <React.Fragment>
-                <TabPills
-                  activeIndex={currentTabIndex}
-                  tabTitles={timeline.map(t => t.title)}
-                  onTabClick={setTabIndex}
-                />
-                {timeline[currentTabIndex].items.map(
-                  ({ calories, title, time }) => (
-                    <Card key={title}>
-                      <div
-                        className={css`
-                          display: flex;
-                          justify-content: space-between;
-                        `}
-                      >
-                        <div>{title}</div>
-                        <div
-                          className={css`
-                            color: ${calories < 0 ? colors.green : colors.red};
-                          `}
-                        >
-                          {Math.abs(calories)}kCal
-                        </div>
-                        <div>{new Date(time).toDateString()}</div>
-                      </div>
-                    </Card>
-                  )
-                )}
-              </React.Fragment>
-            )}
-          </Tabs>
-          Add diet, weight, etc
-        </Content>
-      </React.Fragment>
-    );
-  }
-
-  hasNextDate = date => date + DAY < Date.now();
-
-  handleNextDate = () => {
-    if (this.hasNextDate(this.state.date)) {
-      this.setState(state => ({
-        date: state.date + DAY,
-        burnt: parseInt(Math.random() * 1000 + 1000),
-        consumed: parseInt(Math.random() * 1000 + 1000),
-        percentChange: parseInt(Math.random() * 100),
-      }));
+        );
+      case PAGES.HOME:
+        return (
+          <Home
+            customerId={customerId}
+            onSummary={() => this.setState({ page: PAGES.SUMMARY })}
+            onLogout={() =>
+              this.setState({ customerId: null, page: PAGES.LANDING })
+            }
+          />
+        );
+      case PAGES.SUMMARY:
+        return (
+          <Summary
+            customerId={customerId}
+            onBack={() => this.setState({ page: PAGES.HOME })}
+          />
+        );
     }
-  };
-
-  handlePreviousDate = () =>
-    this.setState(state => ({
-      date: state.date - DAY,
-      burnt: parseInt(Math.random() * 1000 + 1000),
-      consumed: parseInt(Math.random() * 1000 + 1000),
-      percentChange: parseInt(Math.random() * 100),
-    }));
+  }
 }

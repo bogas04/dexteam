@@ -15,25 +15,26 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "emotion": "^9.2.5",
-    "express": "^4.16.3",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
-    "react-emotion": "^9.2.5",
     "async": "^2.6.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "emotion": "^9.2.5",
+    "express": "^4.16.3",
     "http-errors": "~1.6.2",
-    "jade": "~1.11.0",
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
     "node-aho-corasick": "0.0.2",
-    "update": "^0.7.4",
-    "react-svg-donut-chart": "^1.0.0"
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-emotion": "^9.2.5",
+    "react-svg-donut-chart": "^1.0.0",
+    "update": "^0.7.4"
   },
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-plugin-emotion": "^9.2.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-stage-0": "^6.24.1",
     "nodemon": "^1.18.2",
     "now": "^11.2.9",
@@ -51,6 +52,10 @@
   },
   "homepage": "https://github.com/bogas04/dexteam#readme",
   "prettier": {
-    "trailingComma": "es5"
-  }
+    "trailingComma": "es5",
+    "singleQuote": true
+  },
+  "browserslist": [
+    "Chrome > 60"
+  ]
 }
