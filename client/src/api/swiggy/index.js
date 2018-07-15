@@ -13,15 +13,7 @@ export const getFoodCalorieByDate = ({ customerId, date }) =>
       const [{ items = '' } = {}] = data;
 
       if (items !== '') {
-        return fetch(`/api/items/selected?items=${items}`)
-          .then(r => r.json())
-          .then(data =>
-            data.map(d => ({
-              title: d.dish_family,
-              calories: d.calories,
-              time: Date.now(),
-            }))
-          );
+        return getItemDetails(items);
       } else {
         return [
           { time: Date.now() - HOUR * 5, title: 'Veg Biryani', calories: 530 },
@@ -34,6 +26,18 @@ export const getFoodCalorieByDate = ({ customerId, date }) =>
       }
     });
 
+// items = [1,2,3]
+export const getItemDetails = items =>
+  fetch(`/api/items/selected?items=${items}`)
+    .then(r => r.json())
+    .then(data =>
+      data.map(d => ({
+        title: d.dish_family,
+        calories: d.calories,
+        time: Date.now(),
+      }))
+    );
+
 export const getUserSummary = ({ customerId }) =>
   /* Promise.resolve({
     total_order: 44,
@@ -44,3 +48,10 @@ export const getUserSummary = ({ customerId }) =>
   });
   */
   fetch(`/api/users/${customerId}/summary`).then(r => r.json());
+
+export const getFoodByCalorie = ({ calorie }) =>
+  fetch(`/api/items/calories_item_map?calorie=${calorie / 10}`)
+    .then(r => r.text())
+    .then(d => (d === '' ? [] : JSON.parse(d)))
+    .then(d => d.slice(0, 3))
+    .then(itemIds => getItemDetails(JSON.stringify(itemIds)));

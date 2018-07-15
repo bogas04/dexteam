@@ -58,6 +58,7 @@ export default class Landing extends React.PureComponent {
             <input
               name="customerId"
               list="browsers"
+              autoFocus="autoFocus"
               className={css`
                 color: ${colors.white};
                 outline: none;
@@ -75,7 +76,11 @@ export default class Landing extends React.PureComponent {
               placeholder="Customer ID"
             />
             <datalist id="browsers">
-              {this.state.customers.map(id => <option value={id}>{id}</option>)}
+              {this.state.customers.map(id => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
             </datalist>
             <Button>Login</Button>
           </form>
